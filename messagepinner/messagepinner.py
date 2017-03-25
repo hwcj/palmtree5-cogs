@@ -21,7 +21,6 @@ class MessagePinner():
         await self.bot.say("Pin trigger text set!")
         dataIO.save_json("data/messagepinner/settings.json", self.settings)
 
-    @checks.mod_or_permissions(manage_messages=True)
     @commands.command(pass_context=True)
     async def pinclean(self, ctx, *, reaction: str):
         """Cleans pins marked with emoji reaction"""
@@ -37,10 +36,12 @@ class MessagePinner():
                 await self.bot.unpin_message(p)
                 unpinned += 1
 
-        if unpinned > 0:
-            await self.bot.say("Pin cleanup ({}) is complete, {} messages were deleted".format(reaction, unpinned))
-        else:
+        if unpinned == 0:
             await self.bot.say("{}: Nothing to clean up".format(reaction))
+        elif unpinned == 1:
+            await self.bot.say("Pin cleanup ({}) is complete, {} message was deleted".format(reaction, unpinned))
+        elif unpinned > 1:
+            await self.bot.say("Pin cleanup ({}) is complete, {} messages were deleted".format(reaction, unpinned))
 
     async def on_message(self, message):
         """Message listener"""
