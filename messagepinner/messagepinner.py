@@ -47,7 +47,7 @@ class MessagePinner():
         if not message.channel.is_private:
             if message.server.id in self.settings:
                 this_trigger = self.settings[message.server.id]
-                if this_trigger in message.content and "pintrigger" not in message.content and "pinclean" not in message.content:
+                if message.content.startswith(this_trigger+" "):
                     try:
                         await self.bot.pin_message(message)
                     except discord.Forbidden:
