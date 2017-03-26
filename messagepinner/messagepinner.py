@@ -58,6 +58,21 @@ class MessagePinner():
                     except discord.HTTPException:
                         print("Something went wrong. Maybe check the number of pinned messages?")
 
+    async def on_edit(self, before, after):
+        """Message edit listener"""
+        if not after.channel.is_private:
+            if after.server.id in self.settings:
+                this_trigger = self.settings[after.server.id]
+                if after.content.startswith(this_trigger+" ") and (not before.content.startswith(this_trigger+" ")):
+                    try:
+                        await self.bot.pin_message(after)
+                    except discord.Forbidden:
+                        print("No permissions to do that!")
+                    except discord.NotFound:
+                        print("That channel or message doesn't exist!")
+                    except discord.HTTPException:
+                        print("Something went wrong. Maybe check the number of pinned messages?")
+
 
 def check_folder():
     """Folder check"""
@@ -77,4 +92,5 @@ def setup(bot):
     check_file()
     to_add = MessagePinner(bot)
     bot.add_listener(to_add.on_message, 'on_message')
+    bot.add_listener(to_add.on_edit, 'on_message_edit')
     bot.add_cog(to_add)
